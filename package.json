@@ -1,0 +1,7 @@
+{
+  "name": "romeoville-events-fetcher",
+  "type": "module",
+  "dependencies": {
+    "rss-parser": "^3.12.0"
+  }
+}
