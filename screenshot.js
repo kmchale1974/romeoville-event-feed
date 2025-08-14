@@ -1,27 +1,19 @@
-const puppeteer = require('puppeteer');
-const fs = require('fs');
-const path = require('path');
+const puppeteer = require("puppeteer");
+const fs = require("fs");
 
 (async () => {
-  const browser = await puppeteer.launch({
-    headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
+  const browser = await puppeteer.launch({ headless: "new" });
   const page = await browser.newPage();
+  const baseUrl = "https://kmchale1974.github.io/romeoville-event-feed/?page=";
 
-  await page.goto('https://kmchale1974.github.io/romeoville-event-feed/', {
-    waitUntil: 'networkidle0'
-  });
+  if (!fs.existsSync("output")) fs.mkdirSync("output");
 
-  const outputDir = path.join(__dirname, 'output');
-  if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
+  for (let i = 1; i <= 4; i++) {
+    await page.goto(`${baseUrl}${i}`, { waitUntil: "networkidle0" });
+    await page.waitForTimeout(2000); // let animations complete
+    await page.screenshot({ path: `output/page${i}.png`, fullPage: true });
+    console.log(`Generated page${i}.png`);
+  }
 
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const filename = `output/events-${timestamp}.png`;
-
-  await page.setViewport({ width: 616, height: 960 });
-  await page.screenshot({ path: filename });
-
-  console.log(`Screenshot saved to ${filename}`);
   await browser.close();
 })();
