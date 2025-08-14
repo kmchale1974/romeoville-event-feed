@@ -1,38 +1,31 @@
-name: Generate Event PNGs
+name: Generate PNG Pages
 
 on:
   schedule:
-    - cron: '0 * * * *'   # Every hour
-    - cron: '0 0 * * *'   # Midnight reset
-  workflow_dispatch:      # Allows manual trigger
+    - cron: "0 * * * *"  # Every hour
+  workflow_dispatch:
 
 jobs:
-  screenshot:
+  render:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install dependencies
         run: npm install puppeteer
 
-      - name: Take screenshot
+      - name: Generate screenshots
         run: node screenshot.js
 
-      - name: Cleanup old images if midnight
-        if: github.event.schedule == '0 0 * * *'
-        run: rm -f output/*.png
-
-      - name: Commit changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add output/*.png
-          git commit -m "Update screenshot: $(date)"
-          git push
+      - name: Upload screenshots
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: output
