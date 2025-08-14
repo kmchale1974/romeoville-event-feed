@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=616, height=960">
+  <title>Romeoville Event Feed</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+    }
+    .page {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+    .page.active {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="viewer">
+    <div class="page" id="p1"></div>
+    <div class="page" id="p2"></div>
+    <div class="page" id="p3"></div>
+    <div class="page" id="p4"></div>
+  </div>
+
+  <script>
+    const pages = [
+      document.getElementById('p1'),
+      document.getElementById('p2'),
+      document.getElementById('p3'),
+      document.getElementById('p4')
+    ];
+    const base = "https://kmchale1974.github.io/romeoville-event-feed/page";
+    pages.forEach((el, i) => el.style.backgroundImage = `url(${base}${i + 1}.png?${Date.now()})`);
+
+    let current = 0;
+    function showPage(i) {
+      pages.forEach((el, idx) => el.classList.toggle("active", idx === i));
+    }
+    showPage(current);
+    setInterval(() => {
+      current = (current + 1) % 4;
+      showPage(current);
+    }, 15000);
+  </script>
+</body>
+</html>
